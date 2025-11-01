@@ -319,7 +319,6 @@ npm test
   "dev": "tsx watch src/index.ts",           // Start dev server
   "build": "tsc && tsc-alias",              // Build for production
   "start": "node dist/index.js",            // Run production build
-  "test:rpc": "tsx src/test-rpc.ts",        // Test RPC client
   "db:seed": "tsx src/db/seed.ts",          // Seed database
   "openapi:generate": "tsx scripts/generate-openapi.ts" // Generate OpenAPI spec
 }
