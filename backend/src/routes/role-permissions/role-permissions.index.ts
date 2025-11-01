@@ -8,7 +8,6 @@ import { authenticationMiddleware } from "@/middlewares/authentication.middlewar
 import { authorizeMiddleware } from "@/middlewares/authorization.middleware";
 import { ROLES } from "@/constants/roles";
 import { PERMISSIONS } from "@/constants/permissions";
-import { userRateLimiter } from "@/middlewares/rate-limit.middleware";
 import { wrapWithMiddlewares } from "@/lib/wrapWithMiddleware";
 
 const router = createRouter()
@@ -17,7 +16,6 @@ const router = createRouter()
     wrapWithMiddlewares(
       handlers.getAllRolePermissions,
       authenticationMiddleware,
-      // userRateLimiter,
       authorizeMiddleware(
         ROLES.SUPERADMIN,
         ROLES.ADMIN,
@@ -30,7 +28,6 @@ const router = createRouter()
     wrapWithMiddlewares(
       handlers.grantRolePermission,
       authenticationMiddleware,
-      // userRateLimiter,
       authorizeMiddleware(
         ROLES.SUPERADMIN,
         ROLES.ADMIN,

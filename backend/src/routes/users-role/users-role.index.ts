@@ -8,21 +8,19 @@ import { authenticationMiddleware } from "@/middlewares/authentication.middlewar
 import { authorizeMiddleware } from "@/middlewares/authorization.middleware";
 import { ROLES } from "@/constants/roles";
 import { PERMISSIONS } from "@/constants/permissions";
-import { userRateLimiter } from "@/middlewares/rate-limit.middleware";
+import { wrapWithMiddlewares } from "@/lib/wrapWithMiddleware";
 
-const router = createRouter();
-
-//applied authentication middleware and rate limiter
-router.use("/users/role/*", authenticationMiddleware, userRateLimiter);
-
-router.use(
-  routes.patchUserRole.path,
-  authorizeMiddleware(
-    ROLES.SUPERADMIN,
-    ROLES.ADMIN,
-    PERMISSIONS.PATCH_USER_ROLE
+const router = createRouter().openapi(
+  routes.patchUserRole,
+  wrapWithMiddlewares(
+    handlers.patchUserRole,
+    authenticationMiddleware,
+    authorizeMiddleware(
+      ROLES.SUPERADMIN,
+      ROLES.ADMIN,
+      PERMISSIONS.PATCH_USER_ROLE
+    )
   )
 );
-router.openapi(routes.patchUserRole, handlers.patchUserRole);
 
 export default router;

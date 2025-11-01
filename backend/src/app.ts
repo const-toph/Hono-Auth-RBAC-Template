@@ -13,10 +13,10 @@ const app = createApp();
 const routes = [
   auth,
   role_permissions,
-  //   users,
-  //   users_permissions,
-  //   users_role,
-  //   users_role_permissions,
+  users,
+  users_permissions,
+  users_role,
+  users_role_permissions,
 ] as const;
 
 configureOpenAPI(app);

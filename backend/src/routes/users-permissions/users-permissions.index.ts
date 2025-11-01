@@ -12,9 +12,6 @@ import { userRateLimiter } from "@/middlewares/rate-limit.middleware";
 
 const router = createRouter();
 
-//applied authentication middleware and rate limiter
-router.use("/users/permissions/*", authenticationMiddleware, userRateLimiter);
-
 router.use(
   routes.grantUserPermissions.path,
   authorizeMiddleware(

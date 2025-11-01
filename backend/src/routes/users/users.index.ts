@@ -8,35 +8,48 @@ import { authenticationMiddleware } from "@/middlewares/authentication.middlewar
 import { authorizeMiddleware } from "@/middlewares/authorization.middleware";
 import { ROLES } from "@/constants/roles";
 import { PERMISSIONS } from "@/constants/permissions";
-import { userRateLimiter } from "@/middlewares/rate-limit.middleware";
+import { wrapWithMiddlewares } from "@/lib/wrapWithMiddleware";
 
-const router = createRouter();
-
-//applied authentication middleware and rate limiter
-router.use("/users/*", authenticationMiddleware, userRateLimiter);
-
-router.use(
-  routes.getAllUser.path,
-  authorizeMiddleware(ROLES.SUPERADMIN, ROLES.ADMIN, PERMISSIONS.VIEW_USER)
-);
-router.openapi(routes.getAllUser, handlers.getAllUsers);
-
-router.use(
-  routes.createUser.path,
-  authorizeMiddleware(ROLES.SUPERADMIN, ROLES.ADMIN, PERMISSIONS.CREATE_USER)
-);
-router.openapi(routes.createUser, handlers.createUser);
-
-router.use(
-  routes.patchUser.path,
-  authorizeMiddleware(ROLES.SUPERADMIN, ROLES.ADMIN, PERMISSIONS.PATCH_USER)
-);
-router.openapi(routes.patchUser, handlers.patchUser);
-
-router.use(
-  routes.getOneUser.path,
-  authorizeMiddleware(ROLES.SUPERADMIN, ROLES.ADMIN, PERMISSIONS.VIEW_ONE_USER)
-);
-router.openapi(routes.getOneUser, handlers.getOneUser);
+const router = createRouter()
+  .openapi(
+    routes.getAllUser,
+    wrapWithMiddlewares(
+      handlers.getAllUsers,
+      authenticationMiddleware,
+      authorizeMiddleware(ROLES.SUPERADMIN, ROLES.ADMIN, PERMISSIONS.VIEW_USER)
+    )
+  )
+  .openapi(
+    routes.createUser,
+    wrapWithMiddlewares(
+      handlers.createUser,
+      authenticationMiddleware,
+      authorizeMiddleware(
+        ROLES.SUPERADMIN,
+        ROLES.ADMIN,
+        PERMISSIONS.CREATE_USER
+      )
+    )
+  )
+  .openapi(
+    routes.patchUser,
+    wrapWithMiddlewares(
+      handlers.patchUser,
+      authenticationMiddleware,
+      authorizeMiddleware(ROLES.SUPERADMIN, ROLES.ADMIN, PERMISSIONS.PATCH_USER)
+    )
+  )
+  .openapi(
+    routes.getOneUser,
+    wrapWithMiddlewares(
+      handlers.getOneUser,
+      authenticationMiddleware,
+      authorizeMiddleware(
+        ROLES.SUPERADMIN,
+        ROLES.ADMIN,
+        PERMISSIONS.VIEW_ONE_USER
+      )
+    )
+  );
 
 export default router;

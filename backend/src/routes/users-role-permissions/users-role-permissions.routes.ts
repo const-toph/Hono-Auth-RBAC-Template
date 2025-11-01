@@ -6,7 +6,7 @@ import { UserRolePermissionsListResponseSchema } from "@/schemas/user-role-permi
 const tags = ["User-Role-Permissions"];
 
 export const getAllUserRolePermissions = createRoute({
-  path: "/users/role-permissions",
+  path: "/users/role/permissions",
   method: "get",
   tags,
   summary: "Get all users-role-permissions",

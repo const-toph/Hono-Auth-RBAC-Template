@@ -8,28 +8,19 @@ import { authenticationMiddleware } from "@/middlewares/authentication.middlewar
 import { authorizeMiddleware } from "@/middlewares/authorization.middleware";
 import { ROLES } from "@/constants/roles";
 import { PERMISSIONS } from "@/constants/permissions";
-import { userRateLimiter } from "@/middlewares/rate-limit.middleware";
+import { wrapWithMiddlewares } from "@/lib/wrapWithMiddleware";
 
-const router = createRouter();
-
-//applied authentication middleware and rate limiter
-router.use(
-  "/users/role-permissions/*",
-  authenticationMiddleware,
-  userRateLimiter
-);
-
-router.use(
-  routes.getAllUserRolePermissions.path,
-  authorizeMiddleware(
-    ROLES.SUPERADMIN,
-    ROLES.ADMIN,
-    PERMISSIONS.VIEW_USER_ROLE_PERMISSIONS
-  )
-);
-router.openapi(
+const router = createRouter().openapi(
   routes.getAllUserRolePermissions,
-  handlers.getAllUserRolePermissions
+  wrapWithMiddlewares(
+    handlers.getAllUserRolePermissions,
+    authenticationMiddleware,
+    authorizeMiddleware(
+      ROLES.SUPERADMIN,
+      ROLES.ADMIN,
+      PERMISSIONS.VIEW_USER_ROLE_PERMISSIONS
+    )
+  )
 );
 
 export default router;
