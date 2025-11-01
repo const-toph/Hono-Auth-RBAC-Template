@@ -4,32 +4,33 @@ import { createRouter } from "@/lib/create-app";
 
 import * as handlers from "./users-permissions.handler";
 import * as routes from "./users-permissions.routes";
-import { authenticationMiddleware } from "@/middlewares/authentication.middleware";
 import { authorizeMiddleware } from "@/middlewares/authorization.middleware";
 import { ROLES } from "@/constants/roles";
 import { PERMISSIONS } from "@/constants/permissions";
-import { userRateLimiter } from "@/middlewares/rate-limit.middleware";
+import { wrapWithMiddlewares } from "@/lib/wrapWithMiddleware";
 
-const router = createRouter();
-
-router.use(
-  routes.grantUserPermissions.path,
-  authorizeMiddleware(
-    ROLES.SUPERADMIN,
-    ROLES.ADMIN,
-    PERMISSIONS.GRANT_USER_PERMISSIONS
+const router = createRouter()
+  .openapi(
+    routes.grantUserPermissions,
+    wrapWithMiddlewares(
+      handlers.grantUserPermissions,
+      authorizeMiddleware(
+        ROLES.SUPERADMIN,
+        ROLES.ADMIN,
+        PERMISSIONS.GRANT_USER_PERMISSIONS
+      )
+    )
   )
-);
-router.openapi(routes.grantUserPermissions, handlers.grantUserPermissions);
-
-router.use(
-  routes.denyUserPermissions.path,
-  authorizeMiddleware(
-    ROLES.SUPERADMIN,
-    ROLES.ADMIN,
-    PERMISSIONS.DENY_USER_PERMISSIONS
-  )
-);
-router.openapi(routes.denyUserPermissions, handlers.denyUserPermissions);
+  .openapi(
+    routes.denyUserPermissions,
+    wrapWithMiddlewares(
+      handlers.denyUserPermissions,
+      authorizeMiddleware(
+        ROLES.SUPERADMIN,
+        ROLES.ADMIN,
+        PERMISSIONS.DENY_USER_PERMISSIONS
+      )
+    )
+  );
 
 export default router;
