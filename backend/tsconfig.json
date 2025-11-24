@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "target": "ES2023",
+    "esModuleInterop": true,
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
     "baseUrl": "./src",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
     "paths": {
       "@/*": ["*"]
     },
